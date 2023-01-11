@@ -7,6 +7,7 @@ import Popup from './popup';
 import './gantt.scss';
 
 const VIEW_MODE = {
+    HOUR: 'Hour',
     QUARTER_DAY: 'Quarter Day',
     HALF_DAY: 'Half Day',
     DAY: 'Day',
@@ -17,9 +18,10 @@ const VIEW_MODE = {
 
 export default class Gantt {
     constructor(wrapper, tasks, options) {
-        this.setup_wrapper(wrapper);
         this.setup_options(options);
+        // this.setup_leftmenu(leftmenu);
         this.setup_tasks(tasks);
+        this.setup_wrapper(wrapper);
         // initialize with default view mode
         this.change_view_mode();
         this.bind_events();
@@ -49,6 +51,7 @@ export default class Gantt {
         // svg element
         if (!svg_element) {
             // create it
+
             this.$svg = createSVG('svg', {
                 append_to: wrapper_element,
                 class: 'gantt',
@@ -61,8 +64,41 @@ export default class Gantt {
         // wrapper element
         this.$container = document.createElement('div');
         this.$container.classList.add('gantt-container');
+        this.$containerleft = document.createElement('div');
+        this.$containerleft.classList.add('gantt-container-left');
+        let row_y = this.options.header_height + this.options.padding / 2;
+        let row_height = this.options.bar_height + this.options.padding;
+        let header_height = this.options.header_height + 10;
+        this.$containerleft.style.width = '100px';
+        this.$containerleft.style.height = row_y + 'px';
+        let newHeader = document.createElement('div');
+        let newHeaderText = document.createTextNode(this.options.title);
+        newHeader.id = 'newHeader';
+        newHeader.className = 'grid-background-header';
+        newHeader.style.width = '90px';
+        newHeader.style.height = header_height + 'px';
+        newHeader.style.margin = '0 auto';
+        newHeader.style.border = '1px solid #c9daeb';
+        newHeader.style.lineHeight = header_height - 2 + 'px';
+        newHeader.style.fontWeight = 'bold';
+        newHeader.appendChild(newHeaderText);
+        this.$containerleft.appendChild(newHeader);
+        for (let row of this.options.leftRows) {
+            let newElement = document.createElement('div');
+            let newText = document.createTextNode(row.name);
+            newElement.id = 'newDiv' + row.id;
+            newElement.className = 'grid-background-1';
+            newElement.style.width = '90px';
+            newElement.style.height = row_height - 2 + 'px';
+            newElement.style.margin = '0 auto';
+            newElement.style.border = '1px solid #c9daeb';
+            newElement.style.lineHeight = row_height - 2 + 'px';
+            newElement.appendChild(newText);
+            this.$containerleft.appendChild(newElement);
+        }
 
         const parent_element = this.$svg.parentElement;
+        parent_element.appendChild(this.$containerleft);
         parent_element.appendChild(this.$container);
         this.$container.appendChild(this.$svg);
 
@@ -73,10 +109,13 @@ export default class Gantt {
     }
 
     setup_options(options) {
+
+
         const default_options = {
             header_height: 50,
             column_width: 30,
             step: 24,
+            title: 'title',
             view_modes: [...Object.values(VIEW_MODE)],
             bar_height: 20,
             bar_corner_radius: 3,
@@ -87,6 +126,8 @@ export default class Gantt {
             popup_trigger: 'click',
             custom_popup_html: null,
             language: 'en',
+            disabled: true,
+            groups: {},
         };
         this.options = Object.assign({}, default_options, options);
     }
@@ -106,6 +147,9 @@ export default class Gantt {
             // cache index
             task._index = i;
 
+            if (typeof task.row_id === 'number') {
+                task._index = task.row_id;
+            }
             // invalid dates
             if (!task.start && !task.end) {
                 const today = date_utils.today();
@@ -181,8 +225,10 @@ export default class Gantt {
 
     update_view_scale(view_mode) {
         this.options.view_mode = view_mode;
-
-        if (view_mode === VIEW_MODE.DAY) {
+        if (view_mode === VIEW_MODE.HOUR) {
+            this.options.step = 24 / 24;
+            this.options.column_width = 38;
+        } else if (view_mode === VIEW_MODE.DAY) {
             this.options.step = 24;
             this.options.column_width = 38;
         } else if (view_mode === VIEW_MODE.HALF_DAY) {
@@ -225,7 +271,7 @@ export default class Gantt {
         this.gantt_end = date_utils.start_of(this.gantt_end, 'day');
 
         // add date padding on both sides
-        if (this.view_is([VIEW_MODE.QUARTER_DAY, VIEW_MODE.HALF_DAY])) {
+        if (this.view_is([VIEW_MODE.HOUR,VIEW_MODE.QUARTER_DAY, VIEW_MODE.HALF_DAY])) {
             this.gantt_start = date_utils.add(this.gantt_start, -7, 'day');
             this.gantt_end = date_utils.add(this.gantt_end, 7, 'day');
         } else if (this.view_is(VIEW_MODE.MONTH)) {
@@ -266,6 +312,7 @@ export default class Gantt {
 
     bind_events() {
         this.bind_grid_click();
+        if (this.options.disabled) return;
         this.bind_bar_events();
     }
 
@@ -325,6 +372,13 @@ export default class Gantt {
     }
 
     make_grid_rows() {
+        let counter_rows = 0;
+        const distinctRows = [...new Set(this.tasks.map((x) => x.row_id))];
+        for (let row of distinctRows){
+            counter_rows = counter_rows + 1;
+        }
+        console.log(counter_rows + " unique rows")
+
         const rows_layer = createSVG('g', { append_to: this.layers.grid });
         const lines_layer = createSVG('g', { append_to: this.layers.grid });
 
@@ -333,7 +387,8 @@ export default class Gantt {
 
         let row_y = this.options.header_height + this.options.padding / 2;
 
-        for (let task of this.tasks) {
+        // for (let task of this.tasks) {
+        for (let row of distinctRows) {
             createSVG('rect', {
                 x: 0,
                 y: row_y,

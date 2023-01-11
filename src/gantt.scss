@@ -14,6 +14,7 @@ $handle-color: #ddd !default;
 	.grid-background {
 		fill: none;
 	}
+
 	.grid-header {
 		fill: #ffffff;
 		stroke: $border-color;
@@ -132,11 +133,29 @@ $handle-color: #ddd !default;
 		display: none;
 	}
 }
+.gantt-container-left{
 
+	display: flex;
+	flex-direction: column;
+	margin-right: 2px;
+	.grid-background-1  {
+		background-color:  white;
+		color: #8a8aff;
+		text-align: center;
+	}
+	.grid-background-header  {
+		background-color:  white;
+		color: #8a8aff;
+		text-align: center;
+	}
+}
 .gantt-container {
 	position: relative;
 	overflow: auto;
 	font-size: 12px;
+	flex: 1 1 0%;
+	display: flex;
+	flex-direction: column;
 
 	.popup-wrapper {
 		position: absolute;

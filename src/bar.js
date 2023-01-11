@@ -22,6 +22,7 @@ export default class Bar {
 
     prepare_values() {
         this.invalid = this.task.invalid;
+        this.disabled = this.task.disabled;
         this.height = this.gantt.options.bar_height;
         this.x = this.compute_x();
         this.y = this.compute_y();
@@ -122,6 +123,7 @@ export default class Bar {
 
     draw_resize_handles() {
         if (this.invalid) return;
+        if (this.disabled) return;
 
         const bar = this.$bar;
         const handle_width = 8;
@@ -322,6 +324,7 @@ export default class Bar {
         return (
             this.gantt.options.header_height +
             this.gantt.options.padding +
+                //_index is row_id
             this.task._index * (this.height + this.gantt.options.padding)
         );
     }

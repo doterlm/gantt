@@ -14,11 +14,34 @@
 		}
 		/* custom class */
 		.gantt .bar-milestone .bar {
-			fill: tomato;
+			fill: orangered;
 		}
 		.heading {
 			text-align: center;
 		}
+		.gantt-target{
+			display: flex;
+		}
+		/* custom task group classes */
+		.gantt .bar-design .bar {
+			fill: darkorchid;
+		}
+		.gantt .bar-design .bar-progress {
+			fill: darkmagenta;
+		}
+		.gantt .bar-development .bar {
+			fill: limegreen;
+		}
+		.gantt .bar-development .bar-progress {
+			fill: lime;
+		}
+		.gantt .bar-integration .bar {
+			fill: crimson;
+		}
+		.gantt .bar-integration .bar-progress {
+			fill: tomato;
+		}
+
 	</style>
 	<link rel="stylesheet" href="dist/frappe-gantt.css" />
 	<script src="dist/frappe-gantt.js"></script>
@@ -31,11 +54,13 @@
 	<script>
 		var tasks = [
 			{
-				start: '2018-10-01',
-				end: '2018-10-08',
+				start: '2018-10-01 05:00:50',
+				end: '2018-10-01 07:00:50',
 				name: 'Redesign website',
 				id: "Task 0",
-				progress: 20
+				progress: 20,
+				disabled:true,
+				row_id: 0,
 			},
 			{
 				start: '2018-10-03',
@@ -43,7 +68,9 @@
 				name: 'Write new content',
 				id: "Task 1",
 				progress: 5,
-				dependencies: 'Task 0'
+				// dependencies: 'Task 0',
+				disabled:true,
+				row_id: 0,
 			},
 			{
 				start: '2018-10-04',
@@ -51,7 +78,9 @@
 				name: 'Apply new styles',
 				id: "Task 2",
 				progress: 10,
-				dependencies: 'Task 1'
+				// dependencies: 'Task 1',
+				disabled:true,
+				row_id: 2,
 			},
 			{
 				start: '2018-10-08',
@@ -59,7 +88,9 @@
 				name: 'Review',
 				id: "Task 3",
 				progress: 5,
-				dependencies: 'Task 2'
+				// dependencies: 'Task 2',
+				disabled:true,
+				row_id: 2,
 			},
 			{
 				start: '2018-10-08',
@@ -67,7 +98,9 @@
 				name: 'Deploy',
 				id: "Task 4",
 				progress: 0,
-				dependencies: 'Task 2'
+				// dependencies: 'Task 2',
+				disabled:true,
+				row_id: 1,
 			},
 			{
 				start: '2018-10-11',
@@ -75,15 +108,10 @@
 				name: 'Go Live!',
 				id: "Task 5",
 				progress: 0,
-				dependencies: 'Task 4',
-				custom_class: 'bar-milestone'
-			},
-			{
-				start: '2014-01-05',
-				end: '2019-10-12',
-				name: 'Long term task',
-				id: "Task 6",
-				progress: 0
+				// dependencies: 'Task 4',
+				custom_class: 'bar-milestone',
+				disabled:true,
+				row_id: 3,
 			}
 		]
 		var gantt_chart = new Gantt(".gantt-target", tasks, {
@@ -99,8 +127,25 @@
 			on_view_change: (mode) => {
 				console.log(mode);
 			},
-			view_mode: 'Month',
-			language: 'en'
+			view_mode: 'Hour',
+			language: 'en',
+			leftRows: [
+				{
+					'id': 0,
+					'name': 'Line 1',
+				},
+				{
+					'id': 1,
+					'name': 'Line 2',
+				},
+				{
+					'id': 2,
+					'name': 'Line 3',
+				},
+				{
+					'id': 3,
+					'name': 'Line 4',
+				}]
 		});
 		console.log(gantt_chart);
 	</script>

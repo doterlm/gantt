@@ -102,10 +102,29 @@
   display: none;
 }
 
+.gantt-container-left {
+  display: flex;
+  flex-direction: column;
+  margin-right: 2px;
+}
+.gantt-container-left .grid-background-1 {
+  background-color: white;
+  color: #8a8aff;
+  text-align: center;
+}
+.gantt-container-left .grid-background-header {
+  background-color: white;
+  color: #8a8aff;
+  text-align: center;
+}
+
 .gantt-container {
   position: relative;
   overflow: auto;
   font-size: 12px;
+  flex: 1 1 0%;
+  display: flex;
+  flex-direction: column;
 }
 .gantt-container .popup-wrapper {
   position: absolute;
