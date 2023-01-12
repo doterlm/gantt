@@ -1,8 +1,9 @@
 {
-  "name": "frappe-gantt",
-  "version": "0.6.1",
+  "name": "@aginon/frappe-gantt",
+  "version": "1.1.2",
   "description": "A simple, modern, interactive gantt library for the web",
   "main": "src/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "start": "yarn run dev",
     "build": "rollup -c",
@@ -44,12 +45,15 @@
     "prettier": "^2.6.2",
     "rollup": "^2.70.2",
     "rollup-plugin-sass": "^1.2.12",
-    "rollup-plugin-terser": "^7.0.2"
+    "rollup-plugin-terser": "^7.0.2",
+    "tern": "^0.24.3"
   },
   "eslintIgnore": [
     "dist"
   ],
   "dependencies": {
+    "dtsmake": "^0.0.10",
+    "typescript": "^4.9.4",
     "yarn": "^1.22.19"
   }
 }
