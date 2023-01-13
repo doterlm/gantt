@@ -22,10 +22,14 @@ declare namespace Gantt {
         start: string;
         end: string;
         progress: number;
-        dependencies: string;
+        dependencies?: string| undefined;
         custom_class?: string | undefined;
         disabled?:boolean | undefined;
         row_id?: number | undefined;
+    }
+    interface LeftRow {
+        id: number;
+        name: string;
     }
 
     interface EnrichedTask extends Task {
@@ -53,7 +57,7 @@ declare namespace Gantt {
         on_date_change?: ((task: EnrichedTask, start: Date, end: Date) => void) | undefined;
         on_progress_change?: ((task: EnrichedTask, progress: number) => void) | undefined;
         on_view_change?: ((mode: viewMode) => void) | undefined;
-        leftRows?: [] | undefined;
+        leftRows?: Gantt.LeftRow[] | undefined;
         disabled?:boolean | undefined;
     }
 

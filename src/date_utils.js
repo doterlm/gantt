@@ -203,6 +203,7 @@ export default {
     },
 
     format(date, format_string = 'YYYY-MM-DD HH:mm:ss.SSS', lang = 'en') {
+        if (date === undefined || date === null) return;
         const values = this.get_date_values(date).map((d) => padStart(d, 2, 0));
         const format_map = {
             YYYY: values[0],
@@ -274,6 +275,8 @@ export default {
     },
 
     add(date, qty, scale) {
+        console.log(date);
+        if (date === undefined || date === null) return;
         qty = parseInt(qty, 10);
         const vals = [
             date.getFullYear() + (scale === YEAR ? qty : 0),
@@ -288,6 +291,7 @@ export default {
     },
 
     start_of(date, scale) {
+        if (date === undefined || date === null) return;
         const scores = {
             [YEAR]: 6,
             [MONTH]: 5,
@@ -317,10 +321,12 @@ export default {
     },
 
     clone(date) {
+        if (date === undefined || date === null) return;
         return new Date(...this.get_date_values(date));
     },
 
     get_date_values(date) {
+        if (date === undefined || date === null) return;
         return [
             date.getFullYear(),
             date.getMonth(),

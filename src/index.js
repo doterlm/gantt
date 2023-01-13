@@ -326,11 +326,24 @@ export default class Gantt {
         this.map_arrows_on_bars();
         this.set_width();
         this.set_scroll_position();
+
+
     }
 
     setup_layers() {
         this.layers = {};
         const layers = ['grid', 'date', 'arrow', 'progress', 'bar', 'details'];
+        // make group layers
+        for (let layer of layers) {
+            this.layers[layer] = createSVG('g', {
+                class: layer,
+                append_to: this.$svg,
+            });
+        }
+    }
+    setup_background() {
+        this.layers = {};
+        const layers = ['grid' ,'date'];
         // make group layers
         for (let layer of layers) {
             this.layers[layer] = createSVG('g', {
@@ -496,6 +509,7 @@ export default class Gantt {
 
     make_dates() {
         for (let date of this.get_dates_to_draw()) {
+            if (date === undefined || date === null) return;
             createSVG('text', {
                 x: date.lower_x,
                 y: date.lower_y,
@@ -534,10 +548,16 @@ export default class Gantt {
     }
 
     get_date_info(date, last_date, i) {
+        if (date === undefined || date === null) return;
         if (!last_date) {
             last_date = date_utils.add(date, 1, 'year');
         }
         const date_text = {
+            Hour_lower: date_utils.format(
+                date,
+                'HH',
+                this.options.language
+            ),
             'Quarter Day_lower': date_utils.format(
                 date,
                 'HH',
@@ -558,6 +578,12 @@ export default class Gantt {
                     : date_utils.format(date, 'D', this.options.language),
             Month_lower: date_utils.format(date, 'MMMM', this.options.language),
             Year_lower: date_utils.format(date, 'YYYY', this.options.language),
+
+            //上面的字
+            Hour_upper:
+                date.getDate() !== last_date.getDate()
+                    ? date_utils.format(date, 'D MMM', this.options.language)
+                    : '',
             'Quarter Day_upper':
                 date.getDate() !== last_date.getDate()
                     ? date_utils.format(date, 'D MMM', this.options.language)
@@ -597,6 +623,8 @@ export default class Gantt {
         };
 
         const x_pos = {
+            Hour_lower: 0,
+            Hour_upper: this.options.column_width * 24 / 2,
             'Quarter Day_lower': (this.options.column_width * 4) / 2,
             'Quarter Day_upper': 0,
             'Half Day_lower': (this.options.column_width * 2) / 2,

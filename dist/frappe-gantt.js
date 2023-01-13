@@ -206,6 +206,7 @@ var Gantt = (function () {
         },
 
         format(date, format_string = 'YYYY-MM-DD HH:mm:ss.SSS', lang = 'en') {
+            if (date === undefined || date === null) return;
             const values = this.get_date_values(date).map((d) => padStart(d, 2, 0));
             const format_map = {
                 YYYY: values[0],
@@ -277,6 +278,8 @@ var Gantt = (function () {
         },
 
         add(date, qty, scale) {
+            console.log(date);
+            if (date === undefined || date === null) return;
             qty = parseInt(qty, 10);
             const vals = [
                 date.getFullYear() + (scale === YEAR ? qty : 0),
@@ -291,6 +294,7 @@ var Gantt = (function () {
         },
 
         start_of(date, scale) {
+            if (date === undefined || date === null) return;
             const scores = {
                 [YEAR]: 6,
                 [MONTH]: 5,
@@ -320,10 +324,12 @@ var Gantt = (function () {
         },
 
         clone(date) {
+            if (date === undefined || date === null) return;
             return new Date(...this.get_date_values(date));
         },
 
         get_date_values(date) {
+            if (date === undefined || date === null) return;
             return [
                 date.getFullYear(),
                 date.getMonth(),
@@ -1401,11 +1407,24 @@ var Gantt = (function () {
             this.map_arrows_on_bars();
             this.set_width();
             this.set_scroll_position();
+
+
         }
 
         setup_layers() {
             this.layers = {};
             const layers = ['grid', 'date', 'arrow', 'progress', 'bar', 'details'];
+            // make group layers
+            for (let layer of layers) {
+                this.layers[layer] = createSVG('g', {
+                    class: layer,
+                    append_to: this.$svg,
+                });
+            }
+        }
+        setup_background() {
+            this.layers = {};
+            const layers = ['grid' ,'date'];
             // make group layers
             for (let layer of layers) {
                 this.layers[layer] = createSVG('g', {
@@ -1571,6 +1590,7 @@ var Gantt = (function () {
 
         make_dates() {
             for (let date of this.get_dates_to_draw()) {
+                if (date === undefined || date === null) return;
                 createSVG('text', {
                     x: date.lower_x,
                     y: date.lower_y,
@@ -1609,10 +1629,16 @@ var Gantt = (function () {
         }
 
         get_date_info(date, last_date, i) {
+            if (date === undefined || date === null) return;
             if (!last_date) {
                 last_date = date_utils.add(date, 1, 'year');
             }
             const date_text = {
+                Hour_lower: date_utils.format(
+                    date,
+                    'HH',
+                    this.options.language
+                ),
                 'Quarter Day_lower': date_utils.format(
                     date,
                     'HH',
@@ -1633,6 +1659,12 @@ var Gantt = (function () {
                         : date_utils.format(date, 'D', this.options.language),
                 Month_lower: date_utils.format(date, 'MMMM', this.options.language),
                 Year_lower: date_utils.format(date, 'YYYY', this.options.language),
+
+                //上面的字
+                Hour_upper:
+                    date.getDate() !== last_date.getDate()
+                        ? date_utils.format(date, 'D MMM', this.options.language)
+                        : '',
                 'Quarter Day_upper':
                     date.getDate() !== last_date.getDate()
                         ? date_utils.format(date, 'D MMM', this.options.language)
@@ -1672,6 +1704,8 @@ var Gantt = (function () {
             };
 
             const x_pos = {
+                Hour_lower: 0,
+                Hour_upper: this.options.column_width * 24 / 2,
                 'Quarter Day_lower': (this.options.column_width * 4) / 2,
                 'Quarter Day_upper': 0,
                 'Half Day_lower': (this.options.column_width * 2) / 2,
