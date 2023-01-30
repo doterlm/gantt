@@ -1,6 +1,6 @@
 {
   "name": "@aginon/frappe-gantt",
-  "version": "1.1.5",
+  "version": "1.22.23",
   "description": "A simple, modern, interactive gantt library for the web",
   "main": "src/index.js",
   "types": "./dist/index.d.ts",

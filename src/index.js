@@ -363,12 +363,16 @@ export default class Gantt {
 
     make_grid_background() {
         const grid_width = this.dates.length * this.options.column_width;
+        // const grid_height =
+        //     this.options.header_height +
+        //     this.options.padding +
+        //     (this.options.bar_height + this.options.padding) *
+        //         this.tasks.length;
         const grid_height =
             this.options.header_height +
             this.options.padding +
             (this.options.bar_height + this.options.padding) *
-                this.tasks.length;
-
+            this.options.leftRows.length;
         createSVG('rect', {
             x: 0,
             y: 0,
